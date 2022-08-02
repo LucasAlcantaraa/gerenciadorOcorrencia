@@ -17,7 +17,7 @@
   <main class="form-signin w-100 m-auto main_section">
     <fieldset id="login_fieldset">
       <div class="div_form">
-     <form>
+     <form  action="/auth" method="post">
        <div class="header_form">
          <span class="material-symbols-outlined loginIcone">event_note</span>
          <h1>Ocorrências Login</h1>
@@ -26,11 +26,11 @@
        <h1 class="h3 mb-3 fw-normal">Realizar Login</h1>
 
        <div class="form-floating input_form">
-         <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com">
+         <input type="text" class="form-control" name="login" id="floatingInput" placeholder="name@example.com">
          <label for="floatingInput">Login</label>
        </div>
        <div class="form-floating input_form">
-         <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+         <input type="password" class="form-control" name="senha" id="floatingPassword" placeholder="Password">
          <label for="floatingPassword">Senha</label>
        </div>
 
