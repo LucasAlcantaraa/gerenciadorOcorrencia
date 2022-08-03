@@ -17,8 +17,9 @@
     <table class="ocorrencias_table_title">
       <thead>
         <tr>
-          <th class="th_numero">Ocorrência Nº</th>
+          <th class="th_numero">Nº</th>
           <th class="th_descricao">Descrição</th>
+          <th class="th_cliente">Cliente</th>
           <th class="th_data">Data</th>
           <th class="th_erroVersao">Versão Erro</th>
           <th class="th_solucaoVersao">Versão Solução</th>
@@ -29,8 +30,9 @@
 
       <%  tables.forEach(function(dado){ %>
           <tr>
-            <td><%=dado.ocorrenciaNum%></td>
+            <td><%=dado.numeroOcorrencia%></td>
             <td><%=dado.descricaoOcorrencia%></td>
+            <td><%=dado.clienteOcorrencia%></td>
             <td><%=dado.dataOcorrencia.toLocaleString('pt-br').substr(0,10)%></td>
             <td><%=dado.versaoErro%></td>
             <td><%=dado.versaoSolucao%></td>
@@ -41,25 +43,7 @@
     </table>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
 </section>
-
-
-
-
-
-
-
 </main>
 
 

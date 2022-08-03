@@ -67,7 +67,8 @@ app.post('/auth', function(request, response) {
 
 app.get('/home',function(req,res){
 	if (req.session.loggedin) {
-		connection.query(`SELECT * FROM ocorrencias WHERE dataOcorrencia = '${dataFormatacao}'`,function(error,results,fields){
+		
+		connection.query(`SELECT * FROM ocorrencias WHERE dataOcorrencia = '${dataFormatacao.dataInvertida}'`,function(error,results,fields){
    	ocorrenciasDia = results;
     // Output username
 		console.log(results)
@@ -80,8 +81,27 @@ app.get('/home',function(req,res){
 	// res.end();
 });
 app.get('/ocorrencia',function(req,res){
-		res.render('ocorrencia', {user:nameUser})
+res.render('ocorrencia', {user:nameUser, data:dataFormatacao.dataInvertida})
 })
+app.post('/ocorrencia',function(req,res){
+	const obj ={
+		numOcorrencia: req.body.nOcorrencia,
+		moduloOcorrencia: req.body.modulo,
+		dataOcorrencia: req.body.dataOcorrencia,
+		versaoErro: req.body.versaoErro,
+		cliente: req.body.clienteOcorrencia,
+		descricao: req.body.descricaoOcorrencia,
+		versaoSolucao: req.body.versaoSolucao,
+		base: req.body.baseTestada
+	}
+	connection.query(`INSERT INTO ocorrencias VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
+	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.versaoSolucao}','${obj.base}','${obj.moduloOcorrencia}')`,function(error,results,fields){
+		console.log(obj)
+});
+
+});
+
+
 
 app.listen(port, function(){
   console.log(`Server rodando na porta ${port}`)

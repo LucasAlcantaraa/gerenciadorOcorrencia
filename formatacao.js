@@ -1,6 +1,10 @@
-module.exports = dataFormatada();
+module.exports = {
+  dataInvertida:dataFormatadaInvertida(),
+  dataNormal:dataFormatada()
 
-  function dataFormatada(){
+};
+
+  function dataFormatadaInvertida(){
   const data = new Date();
   const dataBR = data.toLocaleString('pt-br')
   const dataSemHora = dataBR.substr(0,10)
@@ -12,3 +16,15 @@ module.exports = dataFormatada();
 
   return dataInvertida
 }
+ function dataFormatada(){
+ const data = new Date();
+ const dataBR = data.toLocaleString('pt-br')
+ const dataSemHora = dataBR.substr(0,10)
+ const dataCortada = dataSemHora.split('/')
+ const dia = dataCortada[0]
+ const mes = dataCortada[1]
+ const ano = dataCortada[2]
+ const dataFormatada = `${dia}-${mes}-${ano}`
+
+ return dataFormatada
+ }
