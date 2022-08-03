@@ -96,3 +96,10 @@ box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 .th_baseTeste{
   width: 11%;
 }
+.aTag{
+  color: white;
+  text-decoration: none;
+}
+.aTag:hover{
+  color: white;
+}

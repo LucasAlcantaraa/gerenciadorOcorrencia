@@ -5,6 +5,7 @@ const request = require("http")
 const mysql = require('mysql2');
 const session = require('express-session');
 const path = require('path');
+const dataFormatacao = require(__dirname + "/formatacao.js")
 
 const port = 8081;
 const app = express();
@@ -26,6 +27,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 let nameUser = '';
+let ocorrenciasDia = '';
 
 app.get('/', function(req,res){
 req.session.destroy()
@@ -65,16 +67,21 @@ app.post('/auth', function(request, response) {
 
 app.get('/home',function(req,res){
 	if (req.session.loggedin) {
-		// Output username
-		res.render('home', {user:nameUser})
+		connection.query(`SELECT * FROM ocorrencias WHERE dataOcorrencia = '${dataFormatacao}'`,function(error,results,fields){
+   	ocorrenciasDia = results;
+    // Output username
+		console.log(results)
+		res.render('home', {user:nameUser, tables:ocorrenciasDia})
+		});
 	} else {
 		// Not logged in
-		res.render('login')
+		res.redirect('/')
 	}
-	res.end();
-
-
+	// res.end();
 });
+app.get('/ocorrencia',function(req,res){
+		res.render('ocorrencia', {user:nameUser})
+})
 
 app.listen(port, function(){
   console.log(`Server rodando na porta ${port}`)

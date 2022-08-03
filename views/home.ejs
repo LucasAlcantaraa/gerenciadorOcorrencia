@@ -7,7 +7,9 @@
     <div class="section-header-links">
       <span class="material-symbols-outlined filtro_icon" title="Filtros">filter_alt</span>
       <button class="btn btn-success relatorio_btn" type="button" name="button">Relatório</button>
+      <a class="aTag" href="ocorrencia">
       <button class="btn btn-primary" type="button" name="button">Nova Ocorrência</button>
+      </a>
     </div>
 
   </div>
@@ -24,29 +26,19 @@
         </tr>
       </thead>
       <tbody class="ocorrencias_table_body">
-        <tr>
-          <td>000001</td>
-          <td>erro ao gerar sped</td>
-          <td>27/05/2020</td>
-          <td>1d897</td>
-          <td>1c123</td>
-          <td>2d456</td>
-        </tr>
-        <tr>
-          <td>teste</td>
-          <td>teste</td>
-          <td>teste</td>
-          <td>teste</td>
-          <td>teste</td>
-          <td>teste</td>
-        </tr>
+
+      <%  tables.forEach(function(dado){ %>
+          <tr>
+            <td><%=dado.ocorrenciaNum%></td>
+            <td><%=dado.descricaoOcorrencia%></td>
+            <td><%=dado.dataOcorrencia.toLocaleString('pt-br').substr(0,10)%></td>
+            <td><%=dado.versaoErro%></td>
+            <td><%=dado.versaoSolucao%></td>
+            <td><%=dado.baseTestada%></td>
+          </tr>
+      <%  }); %>
       </tbody>
-
-
-
-
     </table>
-
   </div>
 
 
