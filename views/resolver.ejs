@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<main>
+<section id="main-section">
+  <div class="section-header">
+    <h2>Ocorrência: <%=nocorrencia %></h2>
+    <div class="section-header-links">
+      <a class="aTag" href="/home">
+      <button class="btn btn-primary" type="button" name="button">Voltar</button>
+      </a>
+    </div>
+
+  </div>
+  <div class="section-body">
+   <div class="divDoForm">
+    <form id="resolverForm" action="/resolver/<%=nocorrencia%>" method="post">
+      <div class="cadastroDiv2">
+        <label for="">Procedimentos</label>
+        <textarea name="prodOcorrencia" rows="8" cols="60"></textarea>
+      </div>
+      <div class="cadastroDiv3">
+        <div>
+          <label>Versão Solução:</label>
+          <input type="text" name="versaoSolucao">
+        </div>
+        <div>
+          <label for="">Base Testada:</label>
+          <input type="text" name="baseTestada">
+        </div
+      </div>
+    </form>
+   </div>
+  </div>
+  <div class="botoesCadastrar">
+    <button type="button" class="btn btn-danger" name="button">CANCELAR</button>
+    <button type="submit" class="btn btn-dark" name="button" form="resolverForm">INCLUIR</button>
+  </div>
+
+
+</section>
+</main>
+
+
+
+
+
+<%- include('partials/footer') %>

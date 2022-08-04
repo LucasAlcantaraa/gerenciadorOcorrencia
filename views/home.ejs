@@ -29,14 +29,19 @@
       <tbody class="ocorrencias_table_body">
 
       <%  tables.forEach(function(dado){ %>
-          <tr>
+          <tr class="tableLink" onclick="location.href = 'resolver/<%=dado.numeroOcorrencia%>'">
             <td><%=dado.numeroOcorrencia%></td>
             <td><%=dado.descricaoOcorrencia%></td>
             <td><%=dado.clienteOcorrencia%></td>
             <td><%=dado.dataOcorrencia.toLocaleString('pt-br').substr(0,10)%></td>
             <td><%=dado.versaoErro%></td>
-            <td><%=dado.versaoSolucao%></td>
-            <td><%=dado.baseTestada%></td>
+            <%  if (dado.versaoSolucao === null || dado.baseTestada === null) { %>
+                <td>N/A</td>
+                <td>N/A</td>
+            <%}else{  %>
+              <td><%=dado.versaoSolucao%></td>
+              <td><%=dado.baseTestada%></td>
+        <%  } %>
           </tr>
       <%  }); %>
       </tbody>

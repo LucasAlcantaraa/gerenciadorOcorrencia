@@ -155,3 +155,11 @@ text-transform: uppercase;
 .botoesCadastrar button{
   min-width: 220px;
 }
+.tableLink:hover{
+cursor: pointer;
+background-color: #4847471a;
+}
+.tableLink:nth-child(odd):hover{
+cursor: pointer;
+background-color: #4847471a;
+}
