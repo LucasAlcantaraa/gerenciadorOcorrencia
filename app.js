@@ -124,8 +124,8 @@ app.post('/resolver/:nocorrencia', function(req, res) {
     ocorrencia: numeroParametro
   }
 
-  connection.query(`INSERT INTO resolvidas(numOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${objResolvidos.ocorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
-  connection.query(`UPDATE ocorrencias A
+connection.query(`INSERT INTO resolvidas(numOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${objResolvidos.ocorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
+connection.query(`UPDATE ocorrencias A
 INNER JOIN resolvidas B ON A.numeroOcorrencia = B.numOcorrencia
 SET A.resolvida = 'T'
 WHERE A.resolvida IS NOT NULL`)

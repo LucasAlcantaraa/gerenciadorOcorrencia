@@ -5,7 +5,7 @@
   <div class="section-header">
     <h2>Lista Ocorrências</h2>
     <div class="section-header-links">
-      <span class="material-symbols-outlined filtro_icon" title="Filtros">filter_alt</span>
+      <button type="button" name="button" class="material-symbols-outlined filtro_icon" data-bs-toggle="modal" data-bs-target="#exampleModal">filter_alt</button>
       <button class="btn btn-success relatorio_btn" type="button" name="button">Relatório</button>
       <a class="aTag" href="ocorrencia">
       <button class="btn btn-primary" type="button" name="button">Nova Ocorrência</button>
@@ -50,6 +50,27 @@
 
 </section>
 </main>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Filtros</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="" action="index.html" method="post">
+      
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

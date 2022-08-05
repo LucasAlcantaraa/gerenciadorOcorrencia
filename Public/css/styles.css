@@ -163,3 +163,21 @@ background-color: #4847471a;
 cursor: pointer;
 background-color: #4847471a;
 }
+.modal-body div{
+  width: 85%;
+  margin: 8px auto;
+}
+.modal-linha1,.modal-linha2,.modal-linha3,.modal-linha4{
+  display: flex;
+  justify-content: space-between;
+
+}
+.dataModal1,.dataModal2{
+  display: flex;
+  flex-direction: column;
+  max-width: 170px;
+}
+@media (min-width:432px){
+
+
+}
