@@ -14,6 +14,7 @@
 
   </div>
   <div class="section-body">
+    <div class="filtrado"></div>
     <table class="ocorrencias_table_title">
       <thead>
         <tr>
@@ -61,7 +62,52 @@
       </div>
       <div class="modal-body">
         <form class="" action="index.html" method="post">
-      
+          <div class="divMain-body">
+            <div class="divColum1">
+              <div class="flexColumn">
+                <label for="">Nº Ocorrência</label>
+                <input type="text" name="nOcorrencia">
+              </div>
+              <div class="flexColumn">
+                <label for="">Cliente</label>
+                <input type="text" name="clienteOcorrencia">
+              </div>
+              <div class="flexColumn">
+                <label for="">Versão Solução</label>
+                <input type="text" name="versaoSolucao">
+              </div>
+              <div class="flexColumn">
+                <label for="">Data Inicial</label>
+                <input type="date" name="dataInicial">
+              </div>
+            </div>
+            <div class="divColum2">
+              <div class="flexColumn">
+                <label for="">Descrição</label>
+                <input type="text" name="descricaoOcorrencia">
+              </div>
+              <div class="flexColumn">
+                <label for="">Versão Erro</label>
+                <input type="text" name="versaoErro">
+              </div>
+              <div class="flexColumn">
+                <label for="">Base Testada</label>
+                <input type="text" name="baseTestada">
+              </div>
+              <div class="flexColumn">
+                <label for="">Data Final</label>
+                <input type="date" name="dataFinal">
+              </div>
+            </div>
+          </div>
+          <div class="divSecondary-body">
+            <div class="divColum3">
+              <div class="divCheck1"><input type="radio" name="Check" >Todos</input></div>
+              <div class="divCheck2"><input type="radio" name="Check">Não Resolvidos</input></div>
+              <div class="divCheck3"><input type="radio" name="Check">Resolvidos</input></div>
+            </div>
+          </div>
+
         </form>
       </div>
       <div class="modal-footer">
