@@ -61,12 +61,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form class="" action="index.html" method="post">
+        <form id="filtrosForm" action="/filtrados" method="post">
           <div class="divMain-body">
             <div class="divColum1">
               <div class="flexColumn">
                 <label for="">Nº Ocorrência</label>
-                <input type="text" name="nOcorrencia">
+                <input type="text" class="nOcorrencia" name="nOcorrencia">
               </div>
               <div class="flexColumn">
                 <label for="">Cliente</label>
@@ -102,17 +102,25 @@
           </div>
           <div class="divSecondary-body">
             <div class="divColum3">
-              <div class="divCheck1"><input type="radio" name="Check" >Todos</input></div>
-              <div class="divCheck2"><input type="radio" name="Check">Não Resolvidos</input></div>
-              <div class="divCheck3"><input type="radio" name="Check">Resolvidos</input></div>
+              <div class="divCheck1"><input type="radio" name="check" value="todos" checked>Todos</input></div>
+              <div class="divCheck2"><input type="radio" name="check" value="nresolvido">Não Resolvidos</input></div>
+              <div class="divCheck3"><input type="radio" name="check" value="resolvido">Resolvidos</input></div>
             </div>
           </div>
-
+          <div class="divTertiary-body">
+            <label>Status:</label>
+            <select class="selectStatus" name="selectStatus">
+              <option value="correcao">Correção</option>
+              <option value="implementacao">Implementação</option>
+              <option value="melhoria">Melhoria</option>
+              <option value="duvida">Dúvida</option>
+            </select>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="submit" class="btn btn-primary" form="filtrosForm">Filtrar</button>
       </div>
     </div>
   </div>

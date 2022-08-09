@@ -149,6 +149,9 @@ text-transform: uppercase;
   margin-top: 20px;
   align-items: center;
 }
+.cadastroDiv3 div{
+margin-left: 10px;
+}
 .cadastroDiv3 select{
   padding: 3px;
   margin-left: 5px;
@@ -202,6 +205,16 @@ margin-right: 4px;
 }
 .divCheck3{
   max-width: 30%;
+}
+.divSecondary-body{
+  border: 2px solid lightgrey;
+  padding: 8px;
+}
+.divTertiary-body{
+  margin-top: 20px !important;
+}
+.selectStatus{
+  padding: 3px;
 }
 @media (min-width:432px){
 

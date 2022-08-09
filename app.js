@@ -72,7 +72,7 @@ app.get('/home', function(req, res) {
     connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada FROM ocorrencias o LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia WHERE dataOcorrencia BETWEEN '${dataFormatacao.dataAnteriorInvertida}'AND'${dataFormatacao.dataInvertida}'`, function(error, results, fields) {
       ocorrenciasDia = results;
       // Output username
-      console.log(results)
+      // console.log(results)
       res.render('home', {
         user: nameUser,
         tables: ocorrenciasDia
@@ -83,6 +83,41 @@ app.get('/home', function(req, res) {
     res.redirect('/')
   }
   // res.end();
+});
+app.get('/filtrados', function(req, res) {
+  res.render('home', {
+    user: nameUser
+  })
+
+});
+app.post('/filtrados', function(req, res) {
+  const obj = {
+    ocorrencia: req.body.nOcorrencia,
+    cliente: req.body.clienteOcorrencia,
+    solucao: req.body.versaoSolucao,
+    dataInicio: req.body.dataInicial,
+    descricao: req.body.descricaoOcorrencia,
+    erro: req.body.versaoErro,
+    baseTeste: req.body.baseTestada,
+    dataFim: req.body.dataFinal,
+    radio: req.body.check,
+    select: req.body.selectStatus,
+    user: nameUser
+  }
+console.log(obj)
+  if (obj.ocorrencia !== '') {
+    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+      FROM ocorrencias o
+      LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia
+      WHERE o.numeroOcorrencia = '${obj.ocorrencia}'`, function(error, results, fields) {
+      console.log(results)
+    });
+  } else if (obj.cliente !== '') {
+
+
+  }
+
+  res.redirect('/filtrados')
 });
 app.get('/ocorrencia', function(req, res) {
   res.render('ocorrencia', {
@@ -124,8 +159,8 @@ app.post('/resolver/:nocorrencia', function(req, res) {
     ocorrencia: numeroParametro
   }
 
-connection.query(`INSERT INTO resolvidas(numOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${objResolvidos.ocorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
-connection.query(`UPDATE ocorrencias A
+  connection.query(`INSERT INTO resolvidas(numOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${objResolvidos.ocorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
+  connection.query(`UPDATE ocorrencias A
 INNER JOIN resolvidas B ON A.numeroOcorrencia = B.numOcorrencia
 SET A.resolvida = 'T'
 WHERE A.resolvida IS NOT NULL`)
