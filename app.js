@@ -30,7 +30,10 @@ app.use(express.static("public"));
 
 let nameUser = '';
 let ocorrenciasDia = '';
-
+let ocorrenciaFiltrada = '';
+let filtro = '';
+let registro = '';
+let registrado = '';
 app.get('/', function(req, res) {
   req.session.destroy()
   req.session = null
@@ -69,13 +72,19 @@ app.post('/auth', function(request, response) {
 
 app.get('/home', function(req, res) {
   if (req.session.loggedin) {
-    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada FROM ocorrencias o LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia WHERE dataOcorrencia BETWEEN '${dataFormatacao.dataAnteriorInvertida}'AND'${dataFormatacao.dataInvertida}'`, function(error, results, fields) {
+    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada FROM ocorrencias o LEFT JOIN resolvidas r ON o.id = r.idOcorrencia WHERE dataOcorrencia BETWEEN '${dataFormatacao.dataAnteriorInvertida}'AND'${dataFormatacao.dataInvertida}'`, function(error, results, fields) {
       ocorrenciasDia = results;
+      registro = results.length
+      if (registro !== ''){
+        registro = `Registros: ${registro}`
+      }
       // Output username
       // console.log(results)
       res.render('home', {
         user: nameUser,
-        tables: ocorrenciasDia
+        tables: ocorrenciasDia,
+        filtro: "",
+        registro: registro
       })
     });
   } else {
@@ -85,10 +94,24 @@ app.get('/home', function(req, res) {
   // res.end();
 });
 app.get('/filtrados', function(req, res) {
-  res.render('home', {
-    user: nameUser
-  })
+  if (registro !== '' && registrado === ''){
+    registrado = registro;
+    registro = `Registros: ${registro}`
+    console.log("entrou no if")
+    console.log(registrado)
+  }else{
+    registro = `Registros: ${registrado}`
+    console.log("entrou no else")
+    console.log(registrado)
+  }
 
+  res.render('home', {
+    user: nameUser,
+    tables: ocorrenciaFiltrada,
+    filtro: filtro,
+    registro: registro
+  })
+  filtro = "";
 });
 app.post('/filtrados', function(req, res) {
   const obj = {
@@ -101,22 +124,67 @@ app.post('/filtrados', function(req, res) {
     baseTeste: req.body.baseTestada,
     dataFim: req.body.dataFinal,
     radio: req.body.check,
-    select: req.body.selectStatus,
+    status: req.body.selectStatus,
     user: nameUser
   }
-console.log(obj)
+  if (obj.status !== '') {
+    filtro = `Filtrado por: ${obj.status}`
+  }
+  console.log(obj)
+  const arrayTodos = [];
+  const arraySelecionados = [];
+  let arrayTratado = '';
+  const datas = `and dataOcorrencia between '${obj.dataInicio}' and '${obj.dataFim}'`
+  const versaoErro = `and versaoErro = '${obj.erro}'`
+  const versaoSolucao = `and versaoSolucao = '${obj.solucao}'`
+  const descricao = `and descricaoOcorrencia like '%${obj.descricao}%'`
+  const baseTestada = `and baseTestada = '${obj.baseTeste}'`
+  const resolvido = `and resolvida = '${obj.radio}'`
+  const status = `and status = '${obj.status}'`
+  const cliente = `and clienteOcorrencia = '${obj.cliente}'`
+  arrayTodos.push(datas, versaoErro, versaoSolucao, descricao, baseTestada, resolvido, status, cliente)
+
+  arrayTodos.forEach(function(dado) {
+    if (!dado.includes("''") && !dado.includes("'%%'")) {
+      arraySelecionados.push(dado)
+    }
+  });
+  arraySelecionados.forEach(function(dado) {
+    arrayTratado += dado
+  });
+
   if (obj.ocorrencia !== '') {
     connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
       FROM ocorrencias o
       LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia
       WHERE o.numeroOcorrencia = '${obj.ocorrencia}'`, function(error, results, fields) {
-      console.log(results)
+      ocorrenciaFiltrada = results
+      registro = results.length
+      registrado = results.length
     });
-  } else if (obj.cliente !== '') {
-
-
+  } else if (arrayTratado === '') {
+    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+    FROM ocorrencias o
+    LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia`, function(error, results, fields) {
+      ocorrenciaFiltrada = results
+      registro = results.length
+      registrado = results.length
+    });
+  } else {
+    if (obj.dataInicio !== '' && obj.dataFim === '' || obj.dataFim !== '' && obj.dataInicio === '' || obj.dataInicio > obj.dataFim) {
+      console.log("Erro ao selecionar Data")
+    } else {
+      let subArrayTratado = arrayTratado.substr(3)
+      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+      FROM ocorrencias o
+      LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia
+      WHERE ${subArrayTratado}`, function(error, results, fields) {
+        ocorrenciaFiltrada = results
+        registro = results.length
+        registrado = results.length
+      });
+    }
   }
-
   res.redirect('/filtrados')
 });
 app.get('/ocorrencia', function(req, res) {
@@ -133,22 +201,30 @@ app.post('/ocorrencia', function(req, res) {
     versaoErro: req.body.versaoErro,
     cliente: req.body.clienteOcorrencia,
     descricao: req.body.descricaoOcorrencia,
-    versaoSolucao: req.body.versaoSolucao,
-    base: req.body.baseTestada
+    status: req.body.statusOcorrencia
   }
   connection.query(`INSERT INTO ocorrencias VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
-	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.moduloOcorrencia}','F')`, function(error, results, fields) {
+	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.moduloOcorrencia}','F', '${obj.status}')`, function(error, results, fields) {
     console.log(obj)
     console.log(error)
   });
   res.redirect('/home')
 });
 app.get('/resolver/:nocorrencia', function(req, res) {
+  let ocorrenciaResolvida = ''
   const numeroResolver = _.lowerCase(req.params.nocorrencia)
-  res.render('resolver', {
-    user: nameUser,
-    nocorrencia: numeroResolver
+  connection.query(`SELECT *
+    FROM resolvidas
+    WHERE numOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
+    ocorrenciaResolvida = results;
+    console.log(ocorrenciaResolvida)
+    res.render('resolver', {
+      user: nameUser,
+      nocorrencia: numeroResolver,
+      selecionados: ocorrenciaResolvida
+    });
   });
+
 });
 app.post('/resolver/:nocorrencia', function(req, res) {
   const numeroParametro = _.lowerCase(req.params.nocorrencia)

@@ -5,7 +5,7 @@
   <div class="section-header">
     <h2>Lista Ocorrências</h2>
     <div class="section-header-links">
-      <button type="button" name="button" class="material-symbols-outlined filtro_icon" data-bs-toggle="modal" data-bs-target="#exampleModal">filter_alt</button>
+      <button type="button" name="button" class="material-symbols-outlined filtro_icon" data-bs-toggle="modal" data-bs-target="#filtrosModal">filter_alt</button>
       <button class="btn btn-success relatorio_btn" type="button" name="button">Relatório</button>
       <a class="aTag" href="ocorrencia">
       <button class="btn btn-primary" type="button" name="button">Nova Ocorrência</button>
@@ -14,7 +14,10 @@
 
   </div>
   <div class="section-body">
-    <div class="filtrado"></div>
+    <div class="filtrado">
+    <h6 class="registros"><%= registro %></h6>
+    <h6 class="pfiltrado"><%= filtro %></h6>
+    </div>
     <table class="ocorrencias_table_title">
       <thead>
         <tr>
@@ -52,8 +55,8 @@
 </section>
 </main>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Filtros-->
+<div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -78,7 +81,7 @@
               </div>
               <div class="flexColumn">
                 <label for="">Data Inicial</label>
-                <input type="date" name="dataInicial">
+                <input class= "dataInicial" type="date" name="dataInicial">
               </div>
             </div>
             <div class="divColum2">
@@ -96,20 +99,21 @@
               </div>
               <div class="flexColumn">
                 <label for="">Data Final</label>
-                <input type="date" name="dataFinal">
+                <input class= "dataFinal" type="date" name="dataFinal">
               </div>
             </div>
           </div>
           <div class="divSecondary-body">
             <div class="divColum3">
-              <div class="divCheck1"><input type="radio" name="check" value="todos" checked>Todos</input></div>
-              <div class="divCheck2"><input type="radio" name="check" value="nresolvido">Não Resolvidos</input></div>
-              <div class="divCheck3"><input type="radio" name="check" value="resolvido">Resolvidos</input></div>
+              <div class="divCheck1"><input type="radio" name="check" value="" checked>Todos</input></div>
+              <div class="divCheck2"><input type="radio" name="check" value="F">Não Resolvidos</input></div>
+              <div class="divCheck3"><input type="radio" name="check" value="T">Resolvidos</input></div>
             </div>
           </div>
           <div class="divTertiary-body">
             <label>Status:</label>
             <select class="selectStatus" name="selectStatus">
+              <option value="">Selecione...</option>
               <option value="correcao">Correção</option>
               <option value="implementacao">Implementação</option>
               <option value="melhoria">Melhoria</option>
@@ -118,13 +122,15 @@
           </div>
         </form>
       </div>
+      <p class="alerta"></p>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="filtrosForm">Filtrar</button>
+        <button type="submit" class="btn btn-primary" form="filtrosForm" onclick="erroDatas()">Filtrar</button>
       </div>
     </div>
   </div>
 </div>
+
 
 
 
