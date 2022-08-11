@@ -131,9 +131,7 @@ overflow-y: scroll;
   border: 2px solid #828282;
   box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
 }
-.divMain-body input[type="date"]{
-  width: 189px;
-}
+
 }
 .divDoForm label{
 font-weight: bold;
@@ -229,6 +227,19 @@ margin-right: 4px;
 }
 .pfiltrado,.registros{
   margin-left:10px;
+}
+.flexColumn{
+  display: flex;
+  flex-direction: column;
+}
+.dataInicial, .dataFinal{
+  padding:1.3px;
+}
+.procedimentosCheck{
+  margin: 0 8px;
+}
+.gerarRelatorio{
+  margin: 12px;
 }
 
 @media (min-width:432px){

@@ -6,7 +6,9 @@
     <h2>Lista Ocorrências</h2>
     <div class="section-header-links">
       <button type="button" name="button" class="material-symbols-outlined filtro_icon" data-bs-toggle="modal" data-bs-target="#filtrosModal">filter_alt</button>
+      <a class="aTag" href="relatorio">
       <button class="btn btn-success relatorio_btn" type="button" name="button">Relatório</button>
+      </a>
       <a class="aTag" href="ocorrencia">
       <button class="btn btn-primary" type="button" name="button">Nova Ocorrência</button>
       </a>
@@ -120,12 +122,14 @@
               <option value="duvida">Dúvida</option>
             </select>
           </div>
+          <input hidden type="radio" name="filtroPage"  value="filtro" checked>
+          <input class="procedimentosCheck" type="checkbox" name="procedimento" value="" checked hidden>
         </form>
       </div>
       <p class="alerta"></p>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" class="btn btn-primary" form="filtrosForm" onclick="erroDatas()">Filtrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary" form="filtrosForm" >Filtrar</button>
       </div>
     </div>
   </div>

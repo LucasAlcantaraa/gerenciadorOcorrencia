@@ -94,6 +94,7 @@ app.get('/home', function(req, res) {
   // res.end();
 });
 app.get('/filtrados', function(req, res) {
+  if (req.session.loggedin) {
   if (registro !== '' && registrado === ''){
     registrado = registro;
     registro = `Registros: ${registro}`
@@ -108,7 +109,11 @@ app.get('/filtrados', function(req, res) {
     registro: registro
   })
   filtro = "";
+}else{
+  res.redirect('/')
+}
 });
+
 app.post('/filtrados', function(req, res) {
   const obj = {
     ocorrencia: req.body.nOcorrencia,
@@ -121,8 +126,11 @@ app.post('/filtrados', function(req, res) {
     dataFim: req.body.dataFinal,
     radio: req.body.check,
     status: req.body.selectStatus,
-    user: nameUser
+    user: nameUser,
+    procedimentos: req.body.procedimento,
+    page: req.body.filtroPage
   }
+  console.log(obj)
   if (obj.status !== '') {
     filtro = `Filtrado por: ${obj.status}`
   }
@@ -150,7 +158,7 @@ app.post('/filtrados', function(req, res) {
   });
 
   if (obj.ocorrencia !== '') {
-      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada ${obj.procedimentos}
       FROM ocorrencias o
       LEFT JOIN resolvidas r ON o.id = r.idOcorrencia
       WHERE o.numeroOcorrencia = '${obj.ocorrencia}'`, function(error, results, fields) {
@@ -159,9 +167,9 @@ app.post('/filtrados', function(req, res) {
       registrado = results.length
     });
   } else if (arrayTratado === '') {
-    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada ${obj.procedimentos}
     FROM ocorrencias o
-    LEFT JOIN resolvidas r ON o.id = r.idOcorrencia`, function(error, results, fields) {
+    LEFT JOIN resolvidas r ON o.id = r.idOcorrencia LIMIT 500`, function(error, results, fields) {
       ocorrenciaFiltrada = results
       registro = results.length
       registrado = results.length
@@ -171,7 +179,7 @@ app.post('/filtrados', function(req, res) {
       console.log("Erro ao selecionar Data")
     } else {
       let subArrayTratado = arrayTratado.substr(3)
-      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada ${obj.procedimentos}
       FROM ocorrencias o
       LEFT JOIN resolvidas r ON o.id = r.idOcorrencia
       WHERE ${subArrayTratado}`, function(error, results, fields) {
@@ -181,14 +189,24 @@ app.post('/filtrados', function(req, res) {
       });
     }
   }
-  res.redirect('/filtrados')
+  if(obj.page === 'filtro'){
+    res.redirect('/filtrados')
+  }else{
+    res.redirect('/relatorio/pesquisados')
+  }
+
 });
 app.get('/ocorrencia', function(req, res) {
+  if (req.session.loggedin) {
   res.render('ocorrencia', {
     user: nameUser,
     data: dataFormatacao.dataInvertida
   })
+}else{
+  res.redirect('/')
+}
 })
+
 app.post('/ocorrencia', function(req, res) {
   const obj = {
     numOcorrencia: req.body.nOcorrencia,
@@ -207,6 +225,7 @@ app.post('/ocorrencia', function(req, res) {
   res.redirect('/home')
 });
 app.get('/resolver/:nocorrencia', function(req, res) {
+  if (req.session.loggedin) {
   let ocorrenciaResolvida = ''
   const numeroResolver = _.lowerCase(req.params.nocorrencia)
   connection.query(`SELECT r.* FROM resolvidas r INNER JOIN ocorrencias o ON r.idOcorrencia = o.id WHERE o.numeroOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
@@ -217,7 +236,9 @@ app.get('/resolver/:nocorrencia', function(req, res) {
       selecionados: ocorrenciaResolvida
     });
   });
-
+}else{
+  res.redirect('/')
+}
 });
 app.post('/resolver/:nocorrencia', function(req, res) {
   let idOcorrencia = '';
@@ -247,6 +268,24 @@ app.post('/resolver/:nocorrencia', function(req, res) {
   });
   res.redirect('/home')
 });
+
+app.get('/relatorio',function(req,res){
+if (req.session.loggedin) {
+  res.render('relatorio', {user: nameUser})
+}else{
+  res.redirect('/')
+}
+})
+
+app.get('/relatorio/pesquisados',function(req,res){
+if (req.session.loggedin) {
+  res.render('relatorioGerado', {user: nameUser})
+
+
+}else{
+  res.redirect('/')
+}
+})
 
 
 app.listen(port, function() {

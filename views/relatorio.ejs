@@ -1,0 +1,102 @@
+<%- include('partials/header') %>
+
+
+<main>
+<section id="main-section">
+  <div class="section-header">
+    <h2>Relatório</h2>
+    <div class="section-header-links">
+      <a class="aTag" href="javascript:history.back()">
+        <button class="btn btn-success" type="button" name="button">Voltar</button>
+      </a>
+    </div>
+  </div>
+  <div class="section-body">
+    <div class="relatorio" id="filtrosRelatorio">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <form id="relatoriosForm" action="/filtrados" method="post">
+              <div class="divMain-body">
+                <div class="divColum1">
+                  <div class="flexColumn">
+                    <label for="">Nº Ocorrência</label>
+                    <input type="text" class="nOcorrencia" name="nOcorrencia">
+                  </div>
+                  <div class="flexColumn">
+                    <label for="">Versão Erro</label>
+                    <input type="text" name="versaoErro">
+                  </div>
+                  <div class="flexColumn">
+                    <label for="">Data Inicial</label>
+                    <input class= "dataInicial" type="date" name="dataInicial">
+                  </div>
+                </div>
+                <div class="divColum2">
+                  <div class="flexColumn">
+                    <label for="">Descrição</label>
+                    <input type="text" name="descricaoOcorrencia">
+                  </div>
+                  <div class="flexColumn">
+                    <label for="">Versão Solução</label>
+                    <input type="text" name="versaoSolucao">
+                  </div>
+                  <div class="flexColumn">
+                    <label for="">Data Final</label>
+                    <input class= "dataFinal" type="date" name="dataFinal">
+                  </div>
+                </div>
+                <div class="divColum4">
+                  <div class="flexColumn">
+                    <label for="">Cliente</label>
+                    <input type="text" name="clienteOcorrencia">
+                  </div>
+                  <div class="flexColumn">
+                    <label for="">Base Testada</label>
+                    <input type="text" name="baseTestada">
+                  </div>
+                  <div class="flexColumn">
+                    <label>Status:</label>
+                    <select class="selectStatus" name="selectStatus">
+                      <option value="">Selecione...</option>
+                      <option value="correcao">Correção</option>
+                      <option value="implementacao">Implementação</option>
+                      <option value="melhoria">Melhoria</option>
+                      <option value="duvida">Dúvida</option>
+                    </select>
+                  </div>
+
+                </div>
+              </div>
+              <div class="divSecondary-body">
+                <div class="divColum3">
+                  <div class="divCheck1"><input type="radio" name="check" value="" checked>Todos</div>
+                  <div class="divCheck2"><input type="radio" name="check" value="F">Não Resolvidos</div>
+                  <div class="divCheck3"><input type="radio" name="check" value="T">Resolvidos</div>
+                </div>
+              </div>
+              <div class="divTertiary-body">
+                <input class="procedimentosCheck" type="checkbox" name="procedimento" value=", r.procedimentos">Incluir Procedimentos
+              </div>
+              <input hidden type="radio" name="filtroPage"  value="relatorio" checked>
+            </form>
+          </div>
+          <p class="alerta"></p>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success gerarRelatorio" form="relatoriosForm" >Gerar Relatório</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+</main>
+
+
+
+
+
+
+<%- include('partials/footer') %>
