@@ -97,12 +97,8 @@ app.get('/filtrados', function(req, res) {
   if (registro !== '' && registrado === ''){
     registrado = registro;
     registro = `Registros: ${registro}`
-    console.log("entrou no if")
-    console.log(registrado)
   }else{
     registro = `Registros: ${registrado}`
-    console.log("entrou no else")
-    console.log(registrado)
   }
 
   res.render('home', {
@@ -154,9 +150,9 @@ app.post('/filtrados', function(req, res) {
   });
 
   if (obj.ocorrencia !== '') {
-    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
+      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
       FROM ocorrencias o
-      LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia
+      LEFT JOIN resolvidas r ON o.id = r.idOcorrencia
       WHERE o.numeroOcorrencia = '${obj.ocorrencia}'`, function(error, results, fields) {
       ocorrenciaFiltrada = results
       registro = results.length
@@ -165,7 +161,7 @@ app.post('/filtrados', function(req, res) {
   } else if (arrayTratado === '') {
     connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
     FROM ocorrencias o
-    LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia`, function(error, results, fields) {
+    LEFT JOIN resolvidas r ON o.id = r.idOcorrencia`, function(error, results, fields) {
       ocorrenciaFiltrada = results
       registro = results.length
       registrado = results.length
@@ -177,7 +173,7 @@ app.post('/filtrados', function(req, res) {
       let subArrayTratado = arrayTratado.substr(3)
       connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada
       FROM ocorrencias o
-      LEFT JOIN resolvidas r ON o.numeroOcorrencia = r.numOcorrencia
+      LEFT JOIN resolvidas r ON o.id = r.idOcorrencia
       WHERE ${subArrayTratado}`, function(error, results, fields) {
         ocorrenciaFiltrada = results
         registro = results.length
@@ -203,7 +199,7 @@ app.post('/ocorrencia', function(req, res) {
     descricao: req.body.descricaoOcorrencia,
     status: req.body.statusOcorrencia
   }
-  connection.query(`INSERT INTO ocorrencias VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
+  connection.query(`INSERT INTO ocorrencias (numeroOcorrencia,descricaoOcorrencia,clienteOcorrencia,dataOcorrencia,versaoErro,modulo,resolvida,status) VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
 	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.moduloOcorrencia}','F', '${obj.status}')`, function(error, results, fields) {
     console.log(obj)
     console.log(error)
@@ -213,11 +209,8 @@ app.post('/ocorrencia', function(req, res) {
 app.get('/resolver/:nocorrencia', function(req, res) {
   let ocorrenciaResolvida = ''
   const numeroResolver = _.lowerCase(req.params.nocorrencia)
-  connection.query(`SELECT *
-    FROM resolvidas
-    WHERE numOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
+  connection.query(`SELECT r.* FROM resolvidas r INNER JOIN ocorrencias o ON r.idOcorrencia = o.id WHERE o.numeroOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
     ocorrenciaResolvida = results;
-    console.log(ocorrenciaResolvida)
     res.render('resolver', {
       user: nameUser,
       nocorrencia: numeroResolver,
@@ -227,6 +220,7 @@ app.get('/resolver/:nocorrencia', function(req, res) {
 
 });
 app.post('/resolver/:nocorrencia', function(req, res) {
+  let idOcorrencia = '';
   const numeroParametro = _.lowerCase(req.params.nocorrencia)
   const objResolvidos = {
     procedimento: req.body.prodOcorrencia,
@@ -234,12 +228,23 @@ app.post('/resolver/:nocorrencia', function(req, res) {
     baseTestada: req.body.baseTestada,
     ocorrencia: numeroParametro
   }
-
-  connection.query(`INSERT INTO resolvidas(numOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${objResolvidos.ocorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
+  connection.query(`Select id from ocorrencias WHERE numeroOcorrencia = '${objResolvidos.ocorrencia}'`,function(error, results, fields) {
+  results.forEach(function(data){
+    idOcorrencia = data.id
+  });
+  connection.query(`SELECT idOcorrencia FROM resolvidas WHERE idOcorrencia = '${idOcorrencia}'`,function(error, results, fields){
+  if(results.length === 0){
+  connection.query(`INSERT INTO resolvidas(idOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${idOcorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
+  }else{
+  connection.query(`UPDATE resolvidas SET versaoSolucao = '${objResolvidos.versaoSolucao}', baseTestada = '${objResolvidos.baseTestada}', procedimentos = '${objResolvidos.procedimento}' WHERE idOcorrencia = ${idOcorrencia}`)
+  }
   connection.query(`UPDATE ocorrencias A
-INNER JOIN resolvidas B ON A.numeroOcorrencia = B.numOcorrencia
-SET A.resolvida = 'T'
-WHERE A.resolvida IS NOT NULL`)
+  INNER JOIN resolvidas B ON A.id = B.idOcorrencia
+  SET A.resolvida = 'T'
+  WHERE A.resolvida IS NOT NULL`)
+  });
+
+  });
   res.redirect('/home')
 });
 
