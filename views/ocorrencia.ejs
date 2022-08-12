@@ -1,63 +1,103 @@
 <%- include('partials/header') %>
 
 <main>
-<section id="main-section">
-  <div class="section-header">
-    <h2>Nova Ocorrência</h2>
-    <div class="section-header-links">
-      <a class="aTag" href="home">
-      <button class="btn btn-primary" type="button" name="button">Voltar</button>
-      </a>
+  <section id="main-section">
+    <div class="section-header">
+      <h2>Nova Ocorrência</h2>
+      <div class="section-header-links">
+        <a class="aTag" href="home">
+          <button class="btn btn-primary" type="button" name="button">Voltar</button>
+        </a>
+      </div>
+
+    </div>
+    <div class="section-body">
+      <div class="divDoForm">
+        <form id="cadastroForm" action="/ocorrencia" method="post">
+          <div class="cadastroDiv1">
+            <div class="divOcorrencia_cadastro">
+              <label>Nº Ocorrência</label>
+              <input class="nOcorrencia" type="number" name="nOcorrencia">
+            </div>
+            <div class="divModulo">
+              <label>Módulo</label>
+              <input class="modulo" type="text" name="modulo">
+            </div>
+            <div class="divData_cadastro">
+              <label>Data</label>
+              <input class="dataOcorrencia" type="date" name="dataOcorrencia" value="<%= data %>">
+            </div>
+            <div class="divVersao">
+              <label>Versão</label>
+              <input class="versaoErro" type="text" name="versaoErro">
+            </div>
+          </div>
+          <div class="cadastroDiv2">
+            <label>Cliente</label>
+            <input class="clienteOcorrencia" type="text" name="clienteOcorrencia">
+            <label for="">Descrição</label>
+            <textarea class="descricaoOcorrencia" name="descricaoOcorrencia" rows="8" cols="60"></textarea>
+          </div>
+          <div class="cadastroDiv3">
+            <label>Status: </label>
+            <select class="statusDaOcorrencia" name="statusOcorrencia">
+              <option value="correcao">Correção</option>
+              <option value="implementacao">Implementação</option>
+              <option value="melhoria">Melhoria</option>
+              <option value="duvida">Dúvida</option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="botoesCadastrar">
+      <button type="button" class="btn btn-danger" name="button">CANCELAR</button>
+      <button id="incluirOcorrencia" type="submit" class="btn btn-dark" name="button" form="cadastroForm">INCLUIR</button>
     </div>
 
-  </div>
-  <div class="section-body">
-   <div class="divDoForm">
-    <form id="cadastroForm" action="/ocorrencia" method="post">
-      <div class="cadastroDiv1">
-        <div class="divOcorrencia_cadastro">
-            <label>Nº Ocorrência</label>
-            <input type="number" name="nOcorrencia">
-        </div>
-        <div class="divModulo">
-         <label>Módulo</label>
-         <input type="text" name="modulo">
-        </div>
-        <div class="divData_cadastro">
-         <label>Data</label>
-         <input type="date" name="dataOcorrencia" value="<%= data %>">
-        </div>
-        <div class="divVersao">
-         <label>Versão</label>
-         <input type="text" name="versaoErro">
-        </div>
-      </div>
-      <div class="cadastroDiv2">
-        <label>Cliente</label>
-        <input type="text" name="clienteOcorrencia">
-        <label for="">Descrição</label>
-        <textarea name="descricaoOcorrencia" rows="8" cols="60"></textarea>
-      </div>
-      <div class="cadastroDiv3">
-        <label>Status: </label>
-        <select class="statusDaOcorrencia" name="statusOcorrencia">
-          <option value="correcao">Correção</option>
-          <option value="implementacao">Implementação</option>
-          <option value="melhoria">Melhoria</option>
-          <option value="duvida">Dúvida</option>
-        </select>
-      </div>
-    </form>
-   </div>
-  </div>
-  <div class="botoesCadastrar">
-    <button type="button" class="btn btn-danger" name="button">CANCELAR</button>
-    <button type="submit" class="btn btn-dark" name="button" form="cadastroForm">INCLUIR</button>
-  </div>
-
-
-</section>
+  </section>
 </main>
+
+<script type="text/javascript">
+  const numero = document.querySelector('.nOcorrencia').value
+  const modulo = document.querySelector('.modulo').value
+  const descricaoOcorrencia = document.querySelector('.dataOcorrencia').value
+  const versaoErro = document.querySelector('.versaoErro').value
+  const cliente = document.querySelector('.clienteOcorrencia').value
+  const descricao = document.querySelector('.descricaoOcorrencia').value
+  const status = document.querySelector('.statusDaOcorrencia').value
+  const array = []
+  array.push(numero, modulo, descricaoOcorrencia, versaoErro, cliente, descricao, status)
+  document.querySelector('#incluirOcorrencia').addEventListener('click', function() {
+    const modal = document.querySelector("#alertaModal")
+    if (array.indexOf('') > -1) {
+      modal.style.display = "block"
+    }
+    window.addEventListener("click", function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    });
+
+  });
+</script>
+<!-- Modal -->
+<div class="modalAlerta" id="alertaModal" tabindex="-1" aria-labelledby="alertaModalLabel" aria-hidden="true">
+  <div class="dialog">
+    <div class="content">
+      <div class="modalAlerta-header">
+        <h5 class="modal-title" id="exampleModalLabel">Preencher Campos</h5>
+      </div>
+      <div class="modalAlerta-body">
+        <p>Não é possível incluir uma ocorrência sem preencher todos os campos!</p>
+      </div>
+      <div class="modalAlerta-footer">
+        <button id="botaoFechar" type="button" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 

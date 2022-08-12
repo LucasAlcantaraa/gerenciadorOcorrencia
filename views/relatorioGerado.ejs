@@ -5,27 +5,61 @@
   <div class="section-header">
     <h2>Relatório</h2>
     <div class="section-header-links">
+      <button class="btn btn-dark" type="button" name="button" onclick="javascript:window.print()">Imprimir</button>
+      <button class="btn btn-success excel-btn" type="button" name="button">Exportar Excel</button>
       <a class="aTag" href="javascript:history.back()">
-        <button class="btn btn-success" type="button" name="button">Voltar</button>
+        <button class="btn btn-primary" type="button" name="button">Voltar</button>
       </a>
     </div>
   </div>
-  <div class="section-body">
+  <div id="section-to-print" class="section-body">
     <div class="relatorio" id="filtrosRelatorio">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
+            <div class="filtrado">
+            <h6 class="registros"><%= registro %></h6>
+            </div>
+            <table class="ocorrencias_table_title">
+              <thead>
+                <tr>
+                  <th class="th_numero">Ocorrência</th>
+                  <th class="th_descricao">Descrição</th>
+                  <th class="th_cliente">Cliente</th>
+                  <th class="th_data">Data</th>
+                  <th class="th_erroVersao">Versão Erro</th>
+                  <th class="th_solucaoVersao">Versão Solução</th>
+                  <th class="th_baseTeste">Base Testada</th>
+                </tr>
+              </thead>
+              <tbody class="ocorrencias_table_body">
+              <%  tables.forEach(function(dado){ %>
+                  <tr class="tableLink" onclick="location.href = 'resolver/<%=dado.numeroOcorrencia%>'">
+                    <td><%=dado.numeroOcorrencia%></td>
+                    <td><%=dado.descricaoOcorrencia%></td>
+                    <td><%=dado.clienteOcorrencia%></td>
+                    <td><%=dado.dataOcorrencia.toLocaleString('pt-br').substr(0,10)%></td>
+                    <td><%=dado.versaoErro%></td>
+                    <%  if (dado.versaoSolucao === null || dado.baseTestada === null) { %>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    <%}else{  %>
+                      <td><%=dado.versaoSolucao%></td>
+                      <td><%=dado.baseTestada%></td>
+                <%  } %>
+                  </tr>
+            <%   if (dado.procedimentos !== undefined) {            %>
+                    <tr><td class="titulo-procedimentos" colspan="7">Procedimentos</td></tr>
+                    <tr><td colspan="7" style="border-bottom: 1px solid"><%=dado.procedimentos %></td></tr>
+                <%  } %>
+      <%  }); %>
+              </tbody>
+            </table>
 
-
-          </div>
           <p class="alerta"></p>
           <div class="modal-footer">
 
-            
+
           </div>
         </div>
-      </div>
-    </div>
+
 
   </div>
 

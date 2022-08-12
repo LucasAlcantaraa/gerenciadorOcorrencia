@@ -134,7 +134,9 @@ app.post('/filtrados', function(req, res) {
   if (obj.status !== '') {
     filtro = `Filtrado por: ${obj.status}`
   }
-  console.log(obj)
+  if (obj.procedimentos === undefined){
+    obj.procedimentos = ""
+  }
   const arrayTodos = [];
   const arraySelecionados = [];
   let arrayTratado = '';
@@ -173,6 +175,7 @@ app.post('/filtrados', function(req, res) {
       ocorrenciaFiltrada = results
       registro = results.length
       registrado = results.length
+      console.log(results)
     });
   } else {
     if (obj.dataInicio !== '' && obj.dataFim === '' || obj.dataFim !== '' && obj.dataInicio === '' || obj.dataInicio > obj.dataFim) {
@@ -217,12 +220,18 @@ app.post('/ocorrencia', function(req, res) {
     descricao: req.body.descricaoOcorrencia,
     status: req.body.statusOcorrencia
   }
+  const array = []
+  array.push(obj.numOcorrencia, obj.moduloOcorrencia,obj.dataOcorrencia,obj.versaoErro,obj.cliente,obj.descricao,obj.status)
+  if(array.indexOf('') > -1){
+    console.log("erro")
+  }else{
   connection.query(`INSERT INTO ocorrencias (numeroOcorrencia,descricaoOcorrencia,clienteOcorrencia,dataOcorrencia,versaoErro,modulo,resolvida,status) VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
 	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.moduloOcorrencia}','F', '${obj.status}')`, function(error, results, fields) {
     console.log(obj)
     console.log(error)
   });
   res.redirect('/home')
+  }
 });
 app.get('/resolver/:nocorrencia', function(req, res) {
   if (req.session.loggedin) {
@@ -279,8 +288,13 @@ if (req.session.loggedin) {
 
 app.get('/relatorio/pesquisados',function(req,res){
 if (req.session.loggedin) {
-  res.render('relatorioGerado', {user: nameUser})
-
+  if (registro !== '' && registrado === ''){
+    registrado = registro;
+    registro = `Registros: ${registro}`
+  }else{
+    registro = `Registros: ${registrado}`
+  }
+  res.render('relatorioGerado', {user: nameUser,tables: ocorrenciaFiltrada,registro: registro})
 
 }else{
   res.redirect('/')
