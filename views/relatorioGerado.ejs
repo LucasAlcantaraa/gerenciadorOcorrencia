@@ -6,7 +6,7 @@
     <h2>Relatório</h2>
     <div class="section-header-links">
       <button class="btn btn-dark" type="button" name="button" onclick="javascript:window.print()">Imprimir</button>
-      <button class="btn btn-success excel-btn" type="button" name="button">Exportar Excel</button>
+      <button class="btn btn-success excel-btn" type="submit" name="button" form="gerarCSV" >Exportar Excel</button>
       <a class="aTag" href="javascript:history.back()">
         <button class="btn btn-primary" type="button" name="button">Voltar</button>
       </a>
@@ -54,7 +54,9 @@
             </table>
 
           <p class="alerta"></p>
-          <div class="modal-footer">
+          <div>
+            <form id="gerarCSV" action="/relatorio/pesquisados" method="post">
+            </form>
 
 
           </div>

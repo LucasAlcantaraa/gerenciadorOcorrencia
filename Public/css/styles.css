@@ -307,6 +307,9 @@ margin-right: 4px;
     width: 100%;
     justify-content: center;
 }
+#botaoFechar{
+  background-color: #212121
+}
 
 @media print {
   body * {

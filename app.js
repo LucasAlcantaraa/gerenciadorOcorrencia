@@ -6,6 +6,9 @@ const mysql = require('mysql2');
 const session = require('express-session');
 const path = require('path');
 const dataFormatacao = require(__dirname + "/formatacao.js")
+const fastcsv = require("fast-csv");
+const fs = require("fs");
+
 
 const port = 8081;
 const app = express();
@@ -300,7 +303,41 @@ if (req.session.loggedin) {
   res.redirect('/')
 }
 })
+app.post('/relatorio/pesquisados', function(req,res){
+const letras = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+const codigo = []
+let nomeArquivo = "";
+for (let index = 0; index < 2; index++) {
+ let letrasEscolhidas = Math.floor(Math.random() * 26);
+ codigo.push(letras[letrasEscolhidas])
+}
+for (let index = 0; index < 2; index++) {
+ let numerosEscolhidos = Math.floor(Math.random() * 100);
+ codigo.push(numerosEscolhidos)
+}
+nomeArquivo = codigo[0] + codigo[1] + codigo[2] + codigo[3]
+const ws = fs.createWriteStream(__dirname + `/relatorios/${nomeArquivo}.csv`,{encoding: 'utf-16le'});
 
+  ocorrenciaFiltrada.forEach(function(data){
+    let date = data.dataOcorrencia.toLocaleString('pt-br').substr(0,10)
+    data.dataOcorrencia = date;
+    ocorrenciaFiltrada.dataOcorrencia = data.dataOcorrencia
+  })
+  console.log(codigo)
+  const jsonData = ocorrenciaFiltrada ;
+  console.log(jsonData)
+  console.log('jasonData')
+
+  fastcsv
+    .write(jsonData, { headers: true, writeBOM: true })
+    .on('error', err => console.error(err))
+    .on("finish", function() {
+      console.log("Arquivo CSV Gerado!");
+    })
+    .pipe(ws);
+
+
+});
 
 app.listen(port, function() {
   console.log(`Server rodando na porta ${port}`)
