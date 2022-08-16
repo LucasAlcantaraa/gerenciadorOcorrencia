@@ -140,9 +140,9 @@ font-weight: bold;
 text-transform: uppercase;
 }
 .cadastroDiv1{
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  margin: 0 auto 10px;
 }
 .cadastroDiv2{
   display: flex;
@@ -320,6 +320,14 @@ min-width: 120px;
 .div-confirmar-negar{
   justify-content: space-around;
   padding: 10 20px;
+}
+
+@media (max-width: 991px){
+  .cadastroDiv1{
+    display: grid;
+    grid-template-columns: 60% 50%;
+    margin: 0 auto 10px;
+  }
 }
 
 @media print {

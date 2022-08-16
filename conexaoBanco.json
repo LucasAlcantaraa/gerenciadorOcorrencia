@@ -1,0 +1,10 @@
+{
+ "Conexao": [{
+   "host": "localhost",
+   "user": "root",
+   "password": "Og1@2022*",
+   "database": "nodelogin"
+ }]
+
+
+}

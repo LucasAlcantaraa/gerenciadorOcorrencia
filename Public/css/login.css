@@ -69,3 +69,7 @@ font-size: 60px;
 .header_form h1{
   align-self: center;
 }
+.alertar{
+  color: red;
+  text-align: center;
+}

@@ -12,11 +12,31 @@ const fs = require("fs");
 
 const port = 8081;
 const app = express();
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Og1@2022*',
-  database: 'nodelogin'
+
+const dadosConexao = []
+
+let connection = ""
+
+fs.readFile('conexaoBanco.json', 'utf8', (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  let arquivo = JSON.parse(data)
+  for(let attr of arquivo['Conexao']){
+        host = attr.host
+        user = attr.user
+        password = attr.password
+        database = attr.database
+  }
+
+  connection = mysql.createConnection({
+  host: host,
+  user: user,
+  password: password,
+  database: database
+  });
+
 });
 
 app.use(session({
@@ -31,16 +51,36 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static("public"));
 
+
 let nameUser = '';
 let ocorrenciasDia = '';
 let ocorrenciaFiltrada = '';
 let filtro = '';
 let registro = '';
 let registrado = '';
+
 app.get('/', function(req, res) {
   req.session.destroy()
   req.session = null
   res.render('login')
+});
+
+app.get('/conta', function(req, res) {
+  req.session.destroy()
+  req.session = null
+  res.render('conta.ejs')
+});
+
+app.post('/conta', function(req, res) {
+const dadosConta = {
+  login: req.body.login,
+  senha: req.body.senha,
+  confirmar: req.body.Confirmarsenha
+}
+if(dadosConta.senha === dadosConta.confirmar){
+  connection.query(`insert into accounts(username,password) VALUES('${dadosConta.login}','${dadosConta.senha}')`)
+  res.redirect('/')
+}
 });
 
 app.post('/auth', function(request, response) {
@@ -78,7 +118,7 @@ app.get('/home', function(req, res) {
     connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada FROM ocorrencias o LEFT JOIN resolvidas r ON o.id = r.idOcorrencia WHERE dataOcorrencia BETWEEN '${dataFormatacao.dataAnteriorInvertida}'AND'${dataFormatacao.dataInvertida}'`, function(error, results, fields) {
       ocorrenciasDia = results;
       registro = results.length
-      if (registro !== ''){
+      if (registro !== '') {
         registro = `Registros: ${registro}`
       }
       // Output username
@@ -98,23 +138,23 @@ app.get('/home', function(req, res) {
 });
 app.get('/filtrados', function(req, res) {
   if (req.session.loggedin) {
-  if (registro !== '' && registrado === ''){
-    registrado = registro;
-    registro = `Registros: ${registro}`
-  }else{
-    registro = `Registros: ${registrado}`
-  }
+    if (registro !== '' && registrado === '') {
+      registrado = registro;
+      registro = `Registros: ${registro}`
+    } else {
+      registro = `Registros: ${registrado}`
+    }
 
-  res.render('home', {
-    user: nameUser,
-    tables: ocorrenciaFiltrada,
-    filtro: filtro,
-    registro: registro
-  })
-  filtro = "";
-}else{
-  res.redirect('/')
-}
+    res.render('home', {
+      user: nameUser,
+      tables: ocorrenciaFiltrada,
+      filtro: filtro,
+      registro: registro
+    })
+    filtro = "";
+  } else {
+    res.redirect('/')
+  }
 });
 
 app.post('/filtrados', function(req, res) {
@@ -137,7 +177,7 @@ app.post('/filtrados', function(req, res) {
   if (obj.status !== '') {
     filtro = `Filtrado por: ${obj.status}`
   }
-  if (obj.procedimentos === undefined){
+  if (obj.procedimentos === undefined) {
     obj.procedimentos = ""
   }
   const arrayTodos = [];
@@ -163,7 +203,7 @@ app.post('/filtrados', function(req, res) {
   });
 
   if (obj.ocorrencia !== '') {
-      connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada ${obj.procedimentos}
+    connection.query(`SELECT o.*, r.versaoSolucao, r.baseTestada ${obj.procedimentos}
       FROM ocorrencias o
       LEFT JOIN resolvidas r ON o.id = r.idOcorrencia
       WHERE o.numeroOcorrencia = '${obj.ocorrencia}'`, function(error, results, fields) {
@@ -195,22 +235,22 @@ app.post('/filtrados', function(req, res) {
       });
     }
   }
-  if(obj.page === 'filtro'){
+  if (obj.page === 'filtro') {
     res.redirect('/filtrados')
-  }else{
+  } else {
     res.redirect('/relatorio/pesquisados')
   }
 
 });
 app.get('/ocorrencia', function(req, res) {
   if (req.session.loggedin) {
-  res.render('ocorrencia', {
-    user: nameUser,
-    data: dataFormatacao.dataInvertida
-  })
-}else{
-  res.redirect('/')
-}
+    res.render('ocorrencia', {
+      user: nameUser,
+      data: dataFormatacao.dataInvertida
+    })
+  } else {
+    res.redirect('/')
+  }
 })
 
 app.post('/ocorrencia', function(req, res) {
@@ -224,33 +264,33 @@ app.post('/ocorrencia', function(req, res) {
     status: req.body.statusOcorrencia
   }
   const array = []
-  array.push(obj.numOcorrencia, obj.moduloOcorrencia,obj.dataOcorrencia,obj.versaoErro,obj.cliente,obj.descricao,obj.status)
-  if(array.indexOf('') > -1){
+  array.push(obj.numOcorrencia, obj.moduloOcorrencia, obj.dataOcorrencia, obj.versaoErro, obj.cliente, obj.descricao, obj.status)
+  if (array.indexOf('') > -1) {
     console.log("erro")
-  }else{
-  connection.query(`INSERT INTO ocorrencias (numeroOcorrencia,descricaoOcorrencia,clienteOcorrencia,dataOcorrencia,versaoErro,modulo,resolvida,status) VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
+  } else {
+    connection.query(`INSERT INTO ocorrencias (numeroOcorrencia,descricaoOcorrencia,clienteOcorrencia,dataOcorrencia,versaoErro,modulo,resolvida,status) VALUES (${obj.numOcorrencia},'${obj.descricao}','${obj.cliente}',
 	'${obj.dataOcorrencia}','${obj.versaoErro}','${obj.moduloOcorrencia}','F', '${obj.status}')`, function(error, results, fields) {
-    console.log(obj)
-    console.log(error)
-  });
-  res.redirect('/home')
+      console.log(obj)
+      console.log(error)
+    });
+    res.redirect('/home')
   }
 });
 app.get('/resolver/:nocorrencia', function(req, res) {
   if (req.session.loggedin) {
-  let ocorrenciaResolvida = ''
-  const numeroResolver = _.lowerCase(req.params.nocorrencia)
-  connection.query(`SELECT r.* FROM resolvidas r INNER JOIN ocorrencias o ON r.idOcorrencia = o.id WHERE o.numeroOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
-    ocorrenciaResolvida = results;
-    res.render('resolver', {
-      user: nameUser,
-      nocorrencia: numeroResolver,
-      selecionados: ocorrenciaResolvida
+    let ocorrenciaResolvida = ''
+    const numeroResolver = _.lowerCase(req.params.nocorrencia)
+    connection.query(`SELECT r.* FROM resolvidas r INNER JOIN ocorrencias o ON r.idOcorrencia = o.id WHERE o.numeroOcorrencia = '${numeroResolver}'`, function(error, results, fields) {
+      ocorrenciaResolvida = results;
+      res.render('resolver', {
+        user: nameUser,
+        nocorrencia: numeroResolver,
+        selecionados: ocorrenciaResolvida
+      });
     });
-  });
-}else{
-  res.redirect('/')
-}
+  } else {
+    res.redirect('/')
+  }
 });
 app.post('/resolver/:nocorrencia', function(req, res) {
   let idOcorrencia = '';
@@ -261,81 +301,96 @@ app.post('/resolver/:nocorrencia', function(req, res) {
     baseTestada: req.body.baseTestada,
     ocorrencia: numeroParametro
   }
-  connection.query(`Select id from ocorrencias WHERE numeroOcorrencia = '${objResolvidos.ocorrencia}'`,function(error, results, fields) {
-  results.forEach(function(data){
-    idOcorrencia = data.id
-  });
-  connection.query(`SELECT idOcorrencia FROM resolvidas WHERE idOcorrencia = '${idOcorrencia}'`,function(error, results, fields){
-  if(results.length === 0){
-  connection.query(`INSERT INTO resolvidas(idOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${idOcorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
-  }else{
-  connection.query(`UPDATE resolvidas SET versaoSolucao = '${objResolvidos.versaoSolucao}', baseTestada = '${objResolvidos.baseTestada}', procedimentos = '${objResolvidos.procedimento}' WHERE idOcorrencia = ${idOcorrencia}`)
-  }
-  connection.query(`UPDATE ocorrencias A
+  connection.query(`Select id from ocorrencias WHERE numeroOcorrencia = '${objResolvidos.ocorrencia}'`, function(error, results, fields) {
+    results.forEach(function(data) {
+      idOcorrencia = data.id
+    });
+    connection.query(`SELECT idOcorrencia FROM resolvidas WHERE idOcorrencia = '${idOcorrencia}'`, function(error, results, fields) {
+      if (results.length === 0) {
+        connection.query(`INSERT INTO resolvidas(idOcorrencia,versaoSolucao,baseTestada,procedimentos) VALUES(${idOcorrencia}, '${objResolvidos.versaoSolucao}', '${objResolvidos.baseTestada}', '${objResolvidos.procedimento}') `)
+      } else {
+        connection.query(`UPDATE resolvidas SET versaoSolucao = '${objResolvidos.versaoSolucao}', baseTestada = '${objResolvidos.baseTestada}', procedimentos = '${objResolvidos.procedimento}' WHERE idOcorrencia = ${idOcorrencia}`)
+      }
+      connection.query(`UPDATE ocorrencias A
   INNER JOIN resolvidas B ON A.id = B.idOcorrencia
   SET A.resolvida = 'T'
   WHERE A.resolvida IS NOT NULL`)
-  });
+    });
 
   });
   res.redirect('/home')
 });
 
-app.get('/relatorio',function(req,res){
-if (req.session.loggedin) {
-  res.render('relatorio', {user: nameUser})
-}else{
-  res.redirect('/')
-}
-})
-
-app.get('/relatorio/pesquisados',function(req,res){
-if (req.session.loggedin) {
-  if (registro !== '' && registrado === ''){
-    registrado = registro;
-    registro = `Registros: ${registro}`
-  }else{
-    registro = `Registros: ${registrado}`
+app.get('/relatorio', function(req, res) {
+  if (req.session.loggedin) {
+    res.render('relatorio', {
+      user: nameUser
+    })
+  } else {
+    res.redirect('/')
   }
-  res.render('relatorioGerado', {user: nameUser,tables: ocorrenciaFiltrada,registro: registro})
-
-}else{
-  res.redirect('/')
-}
 })
-app.post('/relatorio/pesquisados', function(req,res){
-const letras = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-const codigo = []
-let nomeArquivo = "";
-for (let index = 0; index < 2; index++) {
- let letrasEscolhidas = Math.floor(Math.random() * 26);
- codigo.push(letras[letrasEscolhidas])
-}
-for (let index = 0; index < 2; index++) {
- let numerosEscolhidos = Math.floor(Math.random() * 100);
- codigo.push(numerosEscolhidos)
-}
-nomeArquivo = codigo[0] + codigo[1] + codigo[2] + codigo[3]
-const ws = fs.createWriteStream(__dirname + `/relatorios/${nomeArquivo}.csv`,{encoding: 'utf-16le'});
 
-  ocorrenciaFiltrada.forEach(function(data){
-    let date = data.dataOcorrencia.toLocaleString('pt-br').substr(0,10)
+app.get('/relatorio/pesquisados', function(req, res) {
+  if (req.session.loggedin) {
+    if (registro !== '' && registrado === '') {
+      registrado = registro;
+      registro = `Registros: ${registro}`
+    } else {
+      registro = `Registros: ${registrado}`
+    }
+    res.render('relatorioGerado', {
+      user: nameUser,
+      tables: ocorrenciaFiltrada,
+      registro: registro
+    })
+
+  } else {
+    res.redirect('/')
+  }
+})
+app.post('/relatorio/pesquisados', function(req, res) {
+  const letras = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  const codigo = []
+  let nomeArquivo = "";
+  for (let index = 0; index < 2; index++) {
+    let letrasEscolhidas = Math.floor(Math.random() * 26);
+    codigo.push(letras[letrasEscolhidas])
+  }
+  for (let index = 0; index < 2; index++) {
+    let numerosEscolhidos = Math.floor(Math.random() * 100);
+    codigo.push(numerosEscolhidos)
+  }
+  nomeArquivo = codigo[0] + codigo[1] + codigo[2] + codigo[3]
+  const ws = fs.createWriteStream(__dirname + `/relatorios/${nomeArquivo}.csv`, {
+    encoding: 'utf-16le'
+  });
+
+  ocorrenciaFiltrada.forEach(function(data) {
+    let date = data.dataOcorrencia.toLocaleString('pt-br').substr(0, 10)
     data.dataOcorrencia = date;
     ocorrenciaFiltrada.dataOcorrencia = data.dataOcorrencia
   })
   console.log(codigo)
-  const jsonData = ocorrenciaFiltrada ;
+  const jsonData = ocorrenciaFiltrada;
   console.log(jsonData)
   console.log('jasonData')
 
   fastcsv
-    .write(jsonData, { headers: true, writeBOM: true })
+    .write(jsonData, {
+      headers: true,
+      writeBOM: true
+    })
     .on('error', err => console.error(err))
     .on("finish", function() {
       console.log("Arquivo CSV Gerado!");
     })
     .pipe(ws);
 });
+
+app.post('/redirecionar', function(req,res){
+  res.redirect('home')
+})
 
 // app.post('/excluir',function(req,res){
 //
