@@ -335,9 +335,12 @@ const ws = fs.createWriteStream(__dirname + `/relatorios/${nomeArquivo}.csv`,{en
       console.log("Arquivo CSV Gerado!");
     })
     .pipe(ws);
-
-
 });
+
+// app.post('/excluir',function(req,res){
+//
+//
+// })
 
 app.listen(port, function() {
   console.log(`Server rodando na porta ${port}`)

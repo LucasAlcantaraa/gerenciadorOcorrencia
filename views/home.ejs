@@ -41,14 +41,16 @@
             <td><%=dado.dataOcorrencia.toLocaleString('pt-br').substr(0,10)%></td>
             <td><%=dado.versaoErro%></td>
             <%  if (dado.versaoSolucao === null || dado.baseTestada === null) { %>
-                <td>N/A</td>
-                <td>N/A</td>
+                <td class="solucaoCampo">N/A</td>
+                <td class="baseCampo">N/A</td>
             <%}else{  %>
               <td><%=dado.versaoSolucao%></td>
               <td><%=dado.baseTestada%></td>
         <%  } %>
+              <!-- <td><span class="material-symbols-outlined lixeira" data-bs-toggle="modal" data-bs-target="#alertaDeletar">delete</span></td> -->
           </tr>
       <%  }); %>
+
       </tbody>
     </table>
   </div>
@@ -57,11 +59,11 @@
 </main>
 
 <!-- Modal Filtros-->
-<div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="tituloFiltros" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Filtros</h5>
+        <h5 class="modal-title" id="tituloFiltros">Filtros</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -134,8 +136,37 @@
   </div>
 </div>
 
+<div class="modal fade" id="alertaDeletar" tabindex="-1" aria-labelledby="alertaDeletar" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloExcluir"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="confirmarExclusao" action="/excluir" method="post">
+          <p class='alerta'>Tem certeza que deseja excluir este orçamento?</p>
+          <input type="text" class="ocorrenciaOculta" name="ocorrenciaOculta" hidden>
+        </form>
+      </div>
+      <p class="alerta"></p>
+      <div class="modal-footer div-confirmar-negar">
+        <button type="button" class="btn btn-secondary negar" data-bs-dismiss="modal">Não</button>
+        <button type="submit" class="btn btn-primary confirmar" form="confirmarExclusao" >Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-
-
+<!-- <script type="text/javascript">
+  $(".lixeira").on('click',function(event){
+    let ocorrencia = ''
+    event.stopPropagation();
+    let proximo = event.target.closest('tr')
+    ocorrencia = proximo.firstElementChild.innerText
+    $("#tituloExcluir")[0].innerText = `Excluir Ocorrência: ${ocorrencia}`
+    $(".ocorrenciaOculta").val(ocorrencia)
+  })
+</script> -->
 
 <%- include('partials/footer') %>

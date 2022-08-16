@@ -310,6 +310,17 @@ margin-right: 4px;
 #botaoFechar{
   background-color: #212121
 }
+.alerta{
+  font-size: 1.2rem;
+  text-align: center;
+}
+.confirmar,.negar{
+min-width: 120px;
+}
+.div-confirmar-negar{
+  justify-content: space-around;
+  padding: 10 20px;
+}
 
 @media print {
   body * {
